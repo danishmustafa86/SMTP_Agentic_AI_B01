@@ -3,6 +3,8 @@ from dotenv import load_dotenv
 import os
 load_dotenv()
 
+
+# Hi danish
 llm = ChatOpenAI(
     model="gpt-4o-mini",
     api_key=os.getenv("OPENAI_API_KEY"),
