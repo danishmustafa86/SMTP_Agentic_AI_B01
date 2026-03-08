@@ -1,0 +1,55 @@
+# ========================================
+# FREE API PROVIDERS - GET KEYS HERE
+# ========================================
+
+1. GROQ (FREE - BEST)
+   URL: https://console.groq.com/keys
+   File: test_groq.py (already in api_test.py)
+   Models: llama-3.3-70b-versatile, mixtral-8x7b-32768
+
+2. AI/ML API (FREE)
+   URL: https://aimlapi.com/
+   File: test_aiml.py
+   Models: gpt-4o-mini, claude-3-5-sonnet, gemini-pro
+
+3. TOGETHER AI (FREE)
+   URL: https://api.together.xyz/
+   File: test_together.py
+   Models: meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo
+
+4. DEEPSEEK (CHEAP)
+   URL: https://platform.deepseek.com/
+   File: test_deepseek.py
+   Models: deepseek-chat
+
+5. OPENROUTER (FREE MODELS)
+   URL: https://openrouter.ai/
+   File: test_openrouter.py
+   Models: meta-llama/llama-3.2-3b-instruct:free
+
+6. GEMINI (FREE LIMITED)
+   URL: https://aistudio.google.com/apikey
+   File: test_gemini_native.py
+   Note: Uses native SDK, not OpenAI Agents SDK
+
+# ========================================
+# .env FILE FORMAT
+# ========================================
+
+GROQ_API_KEY=gsk-...
+AIML_API_KEY=...
+TOGETHER_API_KEY=...
+DEEPSEEK_API_KEY=sk-...
+OPENROUTER_API_KEY=sk-or-v1-...
+GEMINI_API_KEY=...
+
+# ========================================
+# QUICK TEST
+# ========================================
+
+1. Get key from URL above
+2. Add to .env file
+3. Run: python handoffs/test_PROVIDER.py
+4. Enter your question
+
+# ========================================
