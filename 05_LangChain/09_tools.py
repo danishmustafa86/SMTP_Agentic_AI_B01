@@ -42,9 +42,3 @@ response2 = llm_with_tools.invoke("What is the weather in Karachi?")
 print("Tool calls:", response2.tool_calls)
 
 
-# ── 4. Execute the chosen tool manually ──────────────────────────────────────
-tool_map = {t.name: t for t in tools}
-
-for call in response.tool_calls:
-    result = tool_map[call["name"]].invoke(call["args"])
-    print(f"{call['name']}({call['args']}) → {result}")
