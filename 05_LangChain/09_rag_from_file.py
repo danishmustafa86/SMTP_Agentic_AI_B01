@@ -1,9 +1,9 @@
-from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
+from langchain_community.document_loaders import TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
 import os
@@ -24,35 +24,37 @@ embeddings = OpenAIEmbeddings(
 )
 
 
-# ── 1. Documents ── our "knowledge base" ─────────────────────────────────────
-docs = [
-    Document(page_content="LangChain is a framework for building LLM-powered apps."),
-    Document(page_content="LCEL stands for LangChain Expression Language. It uses | to chain steps."),
-    Document(page_content="Vector stores save embeddings and let you do similarity search."),
-    Document(page_content="RAG means Retrieval-expression Generation: retrieve relevant docs, then generate."),
-    Document(page_content="Agents use tools and an LLM to reason and take actions step by step."),
-]
+# ── 1. Load the text file ────────────────────────────────────────────────────
+loader = TextLoader("knowledge_base.txt", encoding="utf-8")
+docs = loader.load()
+print(f"Loaded {len(docs)} document(s) from knowledge_base.txt")
 
 
-# ── 2. Split & embed → store in FAISS ────────────────────────────────────────
-splitter = RecursiveCharacterTextSplitter(chunk_size=200, chunk_overlap=20)
+# ── 2. Split into chunks & store in FAISS ─────────────────────────────────────
+splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 chunks = splitter.split_documents(docs)
+print(f"Split into {len(chunks)} chunks")
 
 vectorstore = FAISS.from_documents(chunks, embeddings)
-retriever = vectorstore.as_retriever(search_kwargs={"k": 2})
+retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+print("Vector store created!\n")
 
 
 # ── 3. RAG chain ──────────────────────────────────────────────────────────────
 prompt = ChatPromptTemplate.from_template("""
-Answer using ONLY the context below. If unsure, say "I don't know."
+Answer the question using ONLY the context provided below.
+If the answer is not in the context, say "I don't know based on the given context."
 
-Context: {context}
+Context:
+{context}
 
 Question: {question}
 """)
 
+
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
+
 
 rag_chain = (
     {"context": retriever | format_docs, "question": RunnablePassthrough()}
@@ -63,5 +65,14 @@ rag_chain = (
 
 
 # ── 4. Ask questions ──────────────────────────────────────────────────────────
-print(rag_chain.invoke("What is LCEL?"))
-print(rag_chain.invoke("What does RAG stand for?"))
+questions = [
+    "What is the deepest point on Earth?",
+    "How many neurons does the human brain have?",
+    "Who painted the Sistine Chapel ceiling?",
+    "What is the fastest growing plant on Earth?",
+    "How fast does the ISS travel?",
+]
+
+for q in questions:
+    print(f"Q: {q}")
+    print(f"A: {rag_chain.invoke(q)}\n")
