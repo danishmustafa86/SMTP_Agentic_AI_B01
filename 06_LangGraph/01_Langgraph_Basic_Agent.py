@@ -9,6 +9,7 @@ class state(BaseModel):
     graph_state: str 
 
 
+
 def node_1(state):
     return {"graph_state": state.graph_state + " I am"}
 
